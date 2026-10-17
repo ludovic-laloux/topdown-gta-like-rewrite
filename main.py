@@ -29,6 +29,12 @@ class Player:
             movement = movement.normalize()
 
         self.position += movement * self.speed * dt
+
+        half_w = self.rect.width / 2
+        half_h = self.rect.height / 2
+        self.position.x = max(half_w, min(self.position.x, screen_width - half_w))
+        self.position.y = max(half_h, min(self.position.y, screen_height - half_h))
+
         self.rect.center = self.position
 
     def draw(self):
