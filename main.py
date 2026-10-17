@@ -9,25 +9,23 @@ clock = pygame.time.Clock()
 pygame.mouse.set_visible(False)
 running = True
 
-
 class Player:
     def __init__(self):
-        self.surf = pygame.Surface((20,20))
+        self.surf = pygame.Surface((20, 20))
         self.surf.fill("black")
-        self.rect = self.surf.get_rect(center = (screen_width / 2, screen_height / 2))
+        self.rect = self.surf.get_rect(center=(screen_width / 2, screen_height / 2))
         self.position = pygame.Vector2(self.rect.center)
         self.speed = 250
 
-    # update first then draw
-    def update(self, dt):
+    def get_movement(self):
         keys = pygame.key.get_pressed()
         movement = pygame.Vector2(
-            (keys[pygame.K_RIGHT] - keys[pygame.K_LEFT], keys[pygame.K_d] - keys[pygame.K_z])
+            keys[pygame.K_RIGHT] - keys[pygame.K_LEFT],
+            keys[pygame.K_d] - keys[pygame.K_z],
         )
+        return movement.normalize() if movement else movement
 
-        if movement:
-            movement = movement.normalize()
-
+    def update(self, dt, movement):
         self.position += movement * self.speed * dt
 
         half_w = self.rect.width / 2
@@ -37,8 +35,8 @@ class Player:
 
         self.rect.center = self.position
 
-    def draw(self):
-        screen.blit(self.surf, self.rect)
+    def draw(self, surface):
+        surface.blit(self.surf, self.rect)
 
 
 player = Player()
@@ -54,8 +52,10 @@ while running:
             running = False
 
     screen.fill("salmon")
-    player.update(dt)
-    player.draw()
+
+    movement = player.get_movement()
+    player.update(dt, movement)
+    player.draw(screen)
 
     pygame.display.update()
 
