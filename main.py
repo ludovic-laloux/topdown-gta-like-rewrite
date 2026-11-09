@@ -42,10 +42,17 @@ class Player:
 class Missions:
     def __init__(self):
         self.goal_center = pygame.Vector2(1020, 520)
-        self.goal_radius = 50
+        self.goal_radius = 30
         self.goal_visible = True
+        self.complete_timer = 0.0
+        self.font = pygame.font.Font(None, 40)
 
-    def update(self, player):
+    def update(self, player, dt):
+        if self.complete_timer > 0:
+            self.complete_timer -= dt
+            return
+        
+        # closest point check
         closest_x = max(player.rect.left, min(self.goal_center.x, player.rect.right))
         closest_y = max(player.rect.top, min(self.goal_center.y, player.rect.bottom))
 
@@ -56,15 +63,20 @@ class Missions:
 
         if distance <= self.goal_radius:
             self.goal_visible = False
+            self.complete_timer = 2.0
 
-    def draw(self):
+    def draw(self, surface):
         if self.goal_visible:
             pygame.draw.circle(
-                screen, "white",
+                surface, "white",
                 (round(self.goal_center.x), round(self.goal_center.y)),
                 self.goal_radius,
-                width=2
+                width=3
             )
+
+        if self.complete_timer > 0:
+            text = self.font.render("MISSION COMPLETE!", False, (255,255,255))
+            surface.blit(text, (30,30))
 
 player = Player()
 missions = Missions()
@@ -80,13 +92,13 @@ while running:
 
     screen.fill("salmon")
 
-    missions.update(player)
-    missions.draw()
+    missions.update(player, dt)
 
     movement = player.get_movement()
     player.update(movement, dt)
 
     player.draw(screen)
+    missions.draw(screen)
 
     pygame.display.update()
 
