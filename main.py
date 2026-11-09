@@ -44,6 +44,7 @@ class Missions:
         self.goal_center = pygame.Vector2(1020, 520)
         self.goal_radius = 30
         self.goal_visible = True
+        self.complete = False
         self.complete_timer = 0.0
         self.font = pygame.font.Font(None, 40)
 
@@ -64,6 +65,7 @@ class Missions:
         if distance <= self.goal_radius:
             self.goal_visible = False
             self.complete_timer = 2.0
+            self.complete = True
 
     def draw(self, surface):
         if self.goal_visible:
@@ -75,7 +77,11 @@ class Missions:
             )
 
         if self.complete_timer > 0:
-            text = self.font.render("MISSION COMPLETE!", False, (255,255,255))
+            text = self.font.render("MISSION COMPLETE!", False, "white")
+            surface.blit(text, (30,30))
+
+        elif not self.complete:
+            text = self.font.render("WALK TO THE MARKED LOCATION", False, "white")
             surface.blit(text, (30,30))
 
 player = Player()
