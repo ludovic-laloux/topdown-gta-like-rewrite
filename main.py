@@ -49,11 +49,12 @@ class Missions:
         self.font = pygame.font.Font(None, 40)
 
     def update(self, player, dt):
-        if self.complete_timer > 0:
-            self.complete_timer -= dt
+        if self.complete:
+            if self.complete_timer > 0:
+                self.complete_timer -= dt
             return
-        
-        # closest point check
+    
+        # collision test
         closest_x = max(player.rect.left, min(self.goal_center.x, player.rect.right))
         closest_y = max(player.rect.top, min(self.goal_center.y, player.rect.bottom))
 
@@ -79,7 +80,6 @@ class Missions:
         if self.complete_timer > 0:
             text = self.font.render("MISSION COMPLETE!", False, "white")
             surface.blit(text, (30,30))
-
         elif not self.complete:
             text = self.font.render("WALK TO THE MARKED LOCATION", False, "white")
             surface.blit(text, (30,30))
@@ -98,10 +98,10 @@ while running:
 
     screen.fill("salmon")
 
-    missions.update(player, dt)
-
     movement = player.get_movement()
     player.update(movement, dt)
+
+    missions.update(player, dt)
 
     player.draw(screen)
     missions.draw(screen)
